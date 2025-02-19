@@ -19,6 +19,12 @@ export const getCategories = async (): Promise<List<Category>> => {
   return await request("categories");
 };
 
-export const getProducts = async (): Promise<List<Product>> => {
-  return await request("products");
+export const getCategoryById = async (id: string): Promise<Category> => {
+  return await request("categories/" + id);
+};
+
+export const getProducts = async (
+  categoryId: string
+): Promise<List<Product>> => {
+  return await request("products?category=" + categoryId);
 };

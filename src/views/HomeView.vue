@@ -62,12 +62,4 @@ export default defineComponent({
   transform: scale(1.05);
   transition: all 0.2s ease-in-out;
 }
-
-a:link,
-a:visited,
-a:hover,
-a:active {
-  text-decoration: none;
-  color: #2c3e50;
-}
 </style>
