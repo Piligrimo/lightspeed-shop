@@ -29,6 +29,10 @@ export default createStore({
     SET_CART(state, cart) {
       state.cart = cart;
     },
+    RESET_CART(state) {
+      state.cart = {};
+      state.productsInCart = [];
+    },
     SET_CURRENT_PRODUCT(state, productId) {
       state.currentProduct = productId;
     },
