@@ -8,7 +8,22 @@
           :src="product.thumbnailUrl"
           :alt="product.name"
         />
-        <button class="button">ADD TO CART</button>
+        <button v-if="!quantity" class="button" @click="add(product.id)">
+          ADD TO CART
+        </button>
+        <template v-else>
+          <div class="product__quantity">
+            <p class="product__change-quantity" @click="remove(product.id)">
+              ➖
+            </p>
+            <p>{{ quantity }}</p>
+            <p class="product__change-quantity" @click="add(product.id)">➕</p>
+          </div>
+          <router-link :to="'/cart'">
+            <button class="button">CART</button>
+          </router-link>
+        </template>
+
         <button class="button _secondary" @click="$router.back()">BACK</button>
       </div>
       <div class="product__info">
@@ -23,12 +38,14 @@
 <script lang="ts">
 import { getProductById } from "@/api";
 import { Product } from "@/api/types";
+import { mapGetters, mapMutations } from "vuex";
 
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "HomeView",
+  name: "ProductView",
   components: {},
+
   data() {
     return {
       product: null as Product | null,
@@ -37,34 +54,27 @@ export default defineComponent({
   async mounted() {
     const id = this.$route.params.id as string;
     this.product = await getProductById(id);
+    this.setCurrentProduct(id);
+  },
+  methods: {
+    ...mapMutations({
+      setCurrentProduct: "SET_CURRENT_PRODUCT",
+      add: "ADD_TO_CART",
+      remove: "REMOVE_FROM_CART",
+    }),
+  },
+  computed: {
+    ...mapGetters({ quantity: "QUANTITY_OF_CURRENT_PRODUCT_IN_CART" }),
   },
 });
 </script>
 
-<style>
-.button {
-  background-color: #000;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-top: 16px;
-  width: 100%;
-  cursor: pointer;
-}
-.button._secondary {
-  background-color: #bebebe;
-  margin-top: 8px;
-  width: 100%;
-}
-.button:hover {
-  transform: scale(1.01);
-}
-.button:active {
-  transform: scale(0.98);
+<style scoped>
+.product__quantity {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 }
 .product__price {
   margin-top: 0;
@@ -83,5 +93,11 @@ export default defineComponent({
 }
 .product__info {
   text-align: left;
+}
+.product__change-quantity {
+  font-size: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  user-select: none;
 }
 </style>

@@ -32,3 +32,9 @@ export const getProducts = async (
 export const getProductById = async (id: string): Promise<Product> => {
   return await request("products/" + id);
 };
+
+export const getSeveralProductsById = async (
+  ids: string
+): Promise<List<Product>> => {
+  return await request("products?productId=" + ids);
+};

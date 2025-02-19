@@ -20,3 +20,7 @@ export interface Category {
   productCount: number;
   thumbnailUrl: string;
 }
+
+export interface CartItem extends Product {
+  quantity: () => number;
+}
