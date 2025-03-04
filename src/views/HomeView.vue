@@ -38,7 +38,7 @@ export default defineComponent({
   },
   async mounted() {
     const categories = await getCategories();
-    this.categories = categories.items;
+    this.categories = categories?.items || [];
   },
 });
 </script>

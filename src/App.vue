@@ -13,17 +13,21 @@
     </router-link>
   </header>
   <router-view />
+  <my-error-display />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { mapGetters, mapMutations, mapState } from "vuex";
-
+import MyErrorDisplay from "@/components/MyErrorDisplay.vue";
 export default defineComponent({
   name: "App",
+  components: {
+    MyErrorDisplay,
+  },
   computed: {
     ...mapGetters({ totalItemsInCart: "TOTAL_ITEMS_IN_CART" }),
-    ...mapState(["cart"]),
+    ...mapState(["cart", "errors"]),
   },
   methods: {
     ...mapMutations({ setCart: "SET_CART" }),

@@ -40,7 +40,7 @@ export default defineComponent({
     const id = this.$route.params.id as string;
     this.category = await getCategoryById(id);
     const products = await getProducts(id);
-    this.products = products.items;
+    this.products = products?.items || [];
   },
 });
 </script>

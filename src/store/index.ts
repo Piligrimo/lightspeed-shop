@@ -7,6 +7,8 @@ export default createStore({
     cart: {} as Record<number, number>,
     productsInCart: new Array<CartItem>(),
     currentProduct: null,
+    errors: [],
+    errorIdTracker: 0,
   },
   getters: {
     QUANTITY_OF_CURRENT_PRODUCT_IN_CART: (state) => {
@@ -53,6 +55,20 @@ export default createStore({
       newCart[productId] -= 1;
       state.cart = newCart;
     },
+    PUSH_ERROR(state, error) {
+      const errors = JSON.parse(JSON.stringify(state.errors));
+      errors.push(error);
+      state.errors = errors;
+    },
+    REMOVE_ERROR(state, idToRemove) {
+      const errors = JSON.parse(JSON.stringify(state.errors)).filter(
+        (item: { id: number }) => item.id !== idToRemove
+      );
+      state.errors = errors;
+    },
+    INCREMENT_ERROR_ID_TRACKER(state) {
+      state.errorIdTracker++;
+    },
   },
   actions: {
     async FETCH_CART_ITEMS({ state, commit }) {
@@ -61,11 +77,24 @@ export default createStore({
       );
       if (!ids.length) return;
       const products = await getSeveralProductsById(ids.join(","));
-      const enrichedProducts = products.items.map((product) => ({
-        ...product,
-        quantity: () => state.cart[product.id],
-      }));
-      commit("SET_PRODUCTS_IN_CART", enrichedProducts);
+      const enrichedProducts =
+        products &&
+        products.items.map((product) => ({
+          ...product,
+          quantity: () => state.cart[product.id],
+        }));
+      commit("SET_PRODUCTS_IN_CART", enrichedProducts || []);
+    },
+    DISPLAY_ERROR({ state, commit }, message) {
+      const error = {
+        message,
+        id: state.errorIdTracker,
+      };
+      commit("PUSH_ERROR", error);
+      setTimeout(() => {
+        commit("REMOVE_ERROR", error.id);
+      }, 5000);
+      commit("INCREMENT_ERROR_ID_TRACKER");
     },
   },
 });
