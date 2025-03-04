@@ -1,7 +1,8 @@
 <template>
   <div class="category">
-    <h2>{{ (category && category.name) || "Loading..." }}</h2>
-    <section class="category__products">
+    <h2>{{ (category && category.name) || "Category" }}</h2>
+    <my-loader v-if="isPending" />
+    <section v-else class="category__products">
       <div
         v-for="product in products"
         :key="product.id"
@@ -24,22 +25,26 @@
 <script lang="ts">
 import { getCategoryById, getProducts } from "@/api";
 import { Category, Product } from "@/api/types";
+import MyLoader from "@/components/MyLoader.vue";
 
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "CategoryView",
-  components: {},
+  components: { MyLoader },
   data() {
     return {
       category: null as Category | null,
       products: new Array<Product>(),
+      isPending: false,
     };
   },
   async mounted() {
     const id = this.$route.params.id as string;
+    this.isPending = true;
     this.category = await getCategoryById(id);
     const products = await getProducts(id);
+    this.isPending = false;
     this.products = products?.items || [];
   },
 });

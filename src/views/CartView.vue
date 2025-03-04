@@ -1,7 +1,8 @@
 <template>
   <div class="cart">
     <h2>Cart</h2>
-    <div v-if="!filteredCartItems.length">
+    <my-loader v-if="isPending" />
+    <div v-else-if="!filteredCartItems.length">
       <p>Cart is empty</p>
       <router-link to="/"
         ><button class="button _small">Go shopping</button></router-link
@@ -58,18 +59,22 @@ import { mapActions, mapMutations, mapGetters, mapState } from "vuex";
 
 import { defineComponent } from "vue";
 import MyModal from "@/components/MyModal.vue";
+import MyLoader from "@/components/MyLoader.vue";
 
 export default defineComponent({
   name: "CartView",
-  components: { MyModal },
+  components: { MyModal, MyLoader },
 
   data() {
     return {
       isModalVisible: false,
+      isPending: false,
     };
   },
   async mounted() {
-    this.fetchCartItems();
+    this.isPending = true;
+    await this.fetchCartItems();
+    this.isPending = false;
   },
   computed: {
     ...mapState({

@@ -1,6 +1,6 @@
 <template>
   <div class="product">
-    <h1 v-if="!product">Loading...</h1>
+    <my-loader v-if="isPending || !product" />
     <div class="product__container" v-else>
       <div class="product__info">
         <img
@@ -41,19 +41,23 @@ import { Product } from "@/api/types";
 import { mapGetters, mapMutations } from "vuex";
 
 import { defineComponent } from "vue";
+import MyLoader from "@/components/MyLoader.vue";
 
 export default defineComponent({
   name: "ProductView",
-  components: {},
+  components: { MyLoader },
 
   data() {
     return {
       product: null as Product | null,
+      isPending: false,
     };
   },
   async mounted() {
     const id = this.$route.params.id as string;
+    this.isPending = true;
     this.product = await getProductById(id);
+    this.isPending = false;
     this.setCurrentProduct(id);
   },
   methods: {

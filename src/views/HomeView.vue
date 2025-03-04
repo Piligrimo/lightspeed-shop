@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <h2>Categories</h2>
-    <section class="home__categories">
+    <my-loader v-if="isPending" />
+    <section v-else class="home__categories">
       <div
         class="home__category"
         v-for="category in categories"
@@ -26,18 +27,23 @@
 import { getCategories } from "@/api";
 import { Category } from "@/api/types";
 
+import MyLoader from "@/components/MyLoader.vue";
+
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HomeView",
-  components: {},
+  components: { MyLoader },
   data() {
     return {
       categories: new Array<Category>(),
+      isPending: false,
     };
   },
   async mounted() {
+    this.isPending = true;
     const categories = await getCategories();
+    this.isPending = false;
     this.categories = categories?.items || [];
   },
 });
